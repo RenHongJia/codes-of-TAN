@@ -24,17 +24,13 @@ TAN (Tree Augmented Bayesian network)
 ==========
 In the model folder is the TAN algorithm written in Python 3.7 
 
-Examples 
+Instruction
 ==========
-Code 1.py and code2.py are the source code of the case study mentioned in the article "Spatial prediction of oil and gas distribution using Tree Augmented Bayesian network".
+Because real data is proprietary, so we replace real data with simulated data. 
+The TAN algorithm in the model folder can be used to model the simulation data to simulate the application in the article
 
-Running code
-==========
-The example is provided in the documentation, one can easily test the example . 
-First to run code1.py file in IDE pycharm, and get the TAN network structure ,
-then run in code2.py in IDE pycharm, get the TAN network structure under the guidance of experts ,
-Finally, should you have any questions or encounter any bugs, please feel free to contact me at the email 
-address: rhongjia@163.com
+
+
 
 
 
