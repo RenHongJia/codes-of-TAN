@@ -27,7 +27,7 @@ In the model folder is the TAN algorithm written in Python 3.7
 Instruction
 ==========
 Because real data is proprietary, so we replace real data with simulated data. 
-The TAN algorithm in the model folder can be used to model the simulation data to simulate the application in the article
+The TAN algorithm in the model folder can be used to model the simulation data to simulate the application in geoscience
 
 
 
