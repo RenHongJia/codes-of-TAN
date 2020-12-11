@@ -2,7 +2,7 @@
 Implementation of TAN algorithm by python and its Application in Geoscience
 
 Experimental environment
-==========
+===========
 OS: Windows 7
 
 Memory：8G
