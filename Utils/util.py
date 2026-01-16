@@ -1,7 +1,5 @@
 from __future__ import division
 
-__author__ = 'Victor Ruiz, vmr11@pitt.edu'
-
 import pandas as pd
 import numpy as np
 from math import log
@@ -11,7 +9,6 @@ from sklearn.metrics.cluster import supervised as sd
 def entropy(data_classes, base=2):
 # def entropy(data_classes,feature_number=None, base=2):
     '''
-    计算熵H(X)
     Computes the entropy of a set of labels (class instantiations)
     :param base: logarithm base for computation
     :param data_classes: int array, shape = [n_samples]
@@ -20,35 +17,25 @@ def entropy(data_classes, base=2):
     '''
     # if not isinstance(data_classes, pd.core.series.Series):
     #     raise AttributeError('input array should be a pandas series')
-    # unique()将类别转化为numpy.ndarray形式[1,2,3]
     classes = np.unique(data_classes)
-    # 样本个数N_data
+
     N_data = len(data_classes)
     N_class = len(classes)
     ent = 0  # initialize entropy
     Lap_smo_factor = 1
 
-    # iterate over classes 遍历每个类别
+
     for c in classes:
         partition = data_classes[data_classes == c]  # data with class = c
-        # 拉普拉斯平滑 Laplace smoothing
+
         proportion = (len(partition)+Lap_smo_factor) / (N_data + N_class)
         #update entropy
         ent -= proportion * log(proportion, base)
-    """
-    if N_class==feature_number:
-        return ent
-    else:
-        left_n = range(feature_number-N_class)
-        for i in left_n:
-            p = 1/feature_number
-            ent -= p * log(p, base)
-    """
+
 
     return ent
 def con_entropy(X,Y,base=2):
     '''
-    计算条件熵H(X/Y)
     Computes the entropy of a set of labels (class instantiations)
     :param base: logarithm base for computation
     :param data_classes: Series with labels of examples in a dataset
@@ -56,27 +43,21 @@ def con_entropy(X,Y,base=2):
     '''
     if not isinstance(X&Y, pd.core.series.Series):
         raise AttributeError('input array should be a pandas series')
-    # unique()将类别转化为numpy.ndarray形式[1,2,3]
+
     classes = X.unique()
-    # 样本个数N
+
     N_data = len(data_classes)
     ent = 0  # initialize entropy
-    # N_data = len(data_classes)
-    # N_class = len(classes)
-    # ent = 0  # initialize entropy
-    # Lap_smo_factor = 1
-    # iterate over classes 遍历每个类别
+    # iterate over classes
     for c in classes:
         partition = data_classes[data_classes == c]  # data with class = c
         proportion = len(partition) / N
-        #update entropy
         ent -= proportion * log(proportion, base)
-
     return ent
 
 def mutual_infor_score(label_x, label_y):
     '''
-    计算互信息I(X;Y)
+
     Return de information gain obtained by splitting a numeric attribute in two according to cut_point
     :param dataset: pandas dataframe with a column for attribute values and a column for class
     :param cut_point: threshold at which to partition the numeric attribute
@@ -95,17 +76,6 @@ def mutual_infor_score(label_x, label_y):
     # compute H(x)
     feature_number= len(np.unique(labels_true))
     ENT = entropy(labels_true)
-    # ENT = entropy(labels_true,feature_number=feature_number)
-    #
-    """
-    样本个数 data_N;
-    x_N：x取值种类数
-    y_N：y取值种类数
-    class_x :x类别  numpy.ndarray  ['a1' 'a2']
-    class_y :y类别
-    ENT_X_Y :条件熵H(X|Y) 
-    Lap_smo_factor:拉普拉斯平滑
-    """
     data_N = len(labels_true)
     class_x=np.unique(labels_true)
     class_y = np.unique(labels_pred)
@@ -119,7 +89,6 @@ def mutual_infor_score(label_x, label_y):
         len_y = len(dataXy)
         data_x_col = np.asanyarray(dataXy["x_col"])
         entXy = entropy(data_x_col)
-        # entXy = entropy(data_x_col,feature_number=x_N)
         p_y = (len_y+Lap_smo_factor)/(y_N+data_N)
         ENT_X_Y = ENT_X_Y+entXy*p_y
 
@@ -127,7 +96,6 @@ def mutual_infor_score(label_x, label_y):
     return mi
 def mutual_information(label_x, label_y):
     '''
-    计算互信息I(X;Y)
     Return de information gain obtained by splitting a numeric attribute in two according to cut_point
     :param dataset: pandas dataframe with a column for attribute values and a column for class
     :param cut_point: threshold at which to partition the numeric attribute
@@ -143,19 +111,10 @@ def mutual_information(label_x, label_y):
     # if not isinstance(dataset, pd.core.frame.DataFrame):
     #     raise AttributeError('input dataset should be a pandas data frame')
     labels_true, labels_pred = sd.check_clusterings(label_x, label_y)
-    # 合并 labels_true, labels_pred
+
     data_union  = pd.DataFrame({"x_col":labels_true,"y_col":labels_pred})
-    # 计算H(x)
+
     feature_number= len(np.unique(labels_true))
-    """
-      样本个数 data_N;
-      x_N：x取值种类数
-      y_N：y取值种类数
-      class_x :x类别  numpy.ndarray  ['a1' 'a2']
-      class_y :y类别
-      ENT_X_Y :条件熵H(X|Y) 
-      Lap_smo_factor:拉普拉斯平滑
-    """
     data_N = len(labels_true)
     class_x=np.unique(labels_true)
     class_y = np.unique(labels_pred)
@@ -164,13 +123,11 @@ def mutual_information(label_x, label_y):
     xy_N = x_N*y_N
     ENT_X_Y = 0
     Lap_smo_factor = 1
-    # ENT = entropy(labels_true,feature_number=feature_number)
     base =2
     for x in class_x:
         for y in class_y:
             data_xy = data_union[(data_union["y_col"]== y)&(data_union["x_col"] ==x)]
             xy_number = len(data_xy)
-
             p_xy = (xy_number+Lap_smo_factor)/(data_N+xy_N)
             data_y = data_union[data_union["y_col"] == y]
             data_x = data_union[data_union["x_col"] == x]
@@ -182,23 +139,9 @@ def mutual_information(label_x, label_y):
             ENT_X_Y = ENT_X_Y+kl
     return ENT_X_Y
 def con_mutual_infor_score(x, y, z):
-    '''
-    计算条件互信息I(X;Y|Z)
-    '''
     label_x, label_y = sd.check_clusterings(x, y)
     label_z = z
-    # 合并 labels_true, labels_pred
     data_union = pd.DataFrame({"x_col": label_x, "y_col": label_y,"z_col": label_z})
-    """
-      样本个数 data_N;
-      x_N：x取值种类数
-      y_N：y取值种类数
-      z_N：y取值种类数
-      class_x :x类别  numpy.ndarray  ['a1' 'a2']
-      class_y :y类别
-      class_z :z类别
-      Lap_smo_factor:拉普拉斯平滑
-    """
     data_N = len(label_x)
     class_x = np.unique(label_x)
     class_y = np.unique(label_y)
@@ -211,7 +154,6 @@ def con_mutual_infor_score(x, y, z):
     yz_N = x_N  * z_N
     con_mu_infor_score = 0
     Lap_smo_factor = 1
-    # ENT = entropy(labels_true,feature_number=feature_number)
     base = 2
     for z in class_z:
         for x in class_x:
@@ -225,7 +167,6 @@ def con_mutual_infor_score(x, y, z):
                 xz_number = len(data_xz)
                 yz_number = len(data_yz)
                 z_number = len(data_z)
-
                 p_xyz = (xyz_number + Lap_smo_factor) / (data_N + xyz_N)
                 p_xz = (xz_number + Lap_smo_factor) / (data_N + xz_N)
                 p_yz = (yz_number + Lap_smo_factor) / (data_N + yz_N)
@@ -234,12 +175,7 @@ def con_mutual_infor_score(x, y, z):
     return con_mu_infor_score
 
 def get_predict_score(predict_data, label):
-    """
 
-    :param predict_data : 用模型预测的变量值
-    :param label: 真实值
-    :return: score 预测得分
-    """
     score = get_predict(predict_data, label)
     result = 0
     for i in score :
@@ -248,18 +184,12 @@ def get_predict_score(predict_data, label):
 
     return result
 def get_predict(predict_data, label):
-    """
-    :param self:
-    :param predict_data: series 类型
-    :param label:series 类型
-    :return: score 字典形式
-    """
+
 
     predict_data = predict_data[predict_data.columns[0]]
     x_list = list(predict_data)
     y_list = list(label)
     number = list(sorted(np.unique(label)))
-    # 合并 labels_true, labels_pred
     data_union = pd.DataFrame({"x_col": x_list, "y_col": y_list})
     score = {}
     right = 0
@@ -267,8 +197,6 @@ def get_predict(predict_data, label):
     for i in number:
         data_xy = data_union[(data_union["y_col"] == i) & (data_union["x_col"] == i)]
         data_y = data_union[(data_union["y_col"] == i)]
-        # xy_number:x=y=i的个数
-        # y_number: y=i的个数
         xy_number = len(data_xy)
         y_number = len(data_y)
         right = right+ xy_number
